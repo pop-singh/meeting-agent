@@ -1,0 +1,29 @@
+[9:00 AM] Sarah (Project Lead): Good morning everyone. Let's kick off our Q3 planning meeting. We have Alex, Tom, and Priya joining today.
+
+[9:02 AM] Alex (Engineering): Morning. I want to flag that the API migration is about 70% done but we hit a dependency issue with the auth module.
+
+[9:05 AM] Tom (Product): That's a blocker for the mobile release. We were targeting end of month. Is that still realistic?
+
+[9:07 AM] Alex: We need 5 more days minimum. So the 28th at the earliest.
+
+[9:09 AM] Sarah: Okay, let's formally push the mobile release to July 28th. Tom, please update the roadmap.
+
+[9:10 AM] Priya (QA): I'll need the build by the 25th to complete regression testing. Can engineering commit to that?
+
+[9:12 AM] Alex: Yes, 25th works. I'll coordinate with Priya directly.
+
+[9:14 AM] Tom: On the analytics dashboard — we got customer feedback asking for CSV export. Can we squeeze that in?
+
+[9:16 AM] Priya: That's a 2-day effort on QA side. I'd suggest we scope it for the next sprint.
+
+[9:17 AM] Sarah: Agreed. CSV export goes into Sprint 14 backlog. Tom to write the ticket by Friday.
+
+[9:20 AM] Alex: One more thing — we're seeing latency spikes on the EU region cluster. Might need infra support.
+
+[9:22 AM] Sarah: Let's loop in DevOps. Alex, can you file a ticket and link it to the performance epic?
+
+[9:24 AM] Alex: Will do, before EOD today.
+
+[9:25 AM] Sarah: Great. Quick recap — mobile release July 28th, build to QA by July 25th, CSV export in Sprint 14, Alex files infra ticket today. Same time next week?
+
+[9:26 AM] All: Agreed.
