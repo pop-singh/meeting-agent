@@ -21,22 +21,22 @@ import db
 # CONFIG
 # ─────────────────────────────────────────
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in .env")
+    raise ValueError("GOOGLE_API_KEY not found in environment variables.")
 
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
+# ✅ Fixed: corrected model names (gemini-3.x doesn't exist)
 _CANDIDATE_MODELS = [
     "gemini-2.5-flash",
     "gemini-2.5-pro",
-    "gemini-3.5-flash",
-    "gemini-3.1-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
 ]
 
 def _get_pkg_major() -> int:
@@ -168,7 +168,7 @@ with st.expander("⚙️ Settings & Filters", expanded=False):
                         unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="db-err">❌ {_db_msg}</div>', unsafe_allow_html=True)
-            st.caption("Set MYSQL_HOST / MYSQL_USER / MYSQL_PASSWORD / MYSQL_DATABASE env vars")
+            st.caption("Set MySQL env vars in Railway dashboard (Variables tab)")
 
 # ─────────────────────────────────────────
 # HELPER FUNCTIONS
@@ -905,7 +905,7 @@ if "data" in st.session_state:
 
         if not _db_ok:
             st.error(f"MySQL not connected: {_db_msg}")
-            st.caption("Set MYSQL_HOST / MYSQL_USER / MYSQL_PASSWORD / MYSQL_DATABASE env vars.")
+            st.caption("Set MySQL env vars in Railway dashboard under Variables tab.")
         else:
             h1, h2 = st.columns([3, 1])
             with h1:
