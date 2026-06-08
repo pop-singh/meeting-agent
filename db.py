@@ -2,24 +2,21 @@ import json
 import os
 import mysql.connector
 from mysql.connector import Error as MySQLError
-
-# ─────────────────────────────────────────
-# CONNECTION CONFIG
-# ─────────────────────────────────────────
 from dotenv import load_dotenv
-import os
-import mysql.connector
 
 load_dotenv()
 
+# ─────────────────────────────────────────
+# CONNECTION CONFIG
+# Handles both Railway (MYSQLHOST) and local (MYSQL_HOST) naming
+# ─────────────────────────────────────────
 MYSQL_CONFIG = {
-    "host": os.getenv("MYSQL_HOST"),
-    "port": int(os.getenv("MYSQL_PORT", 3306)),
-    "user": os.getenv("MYSQL_USER"),
-    "password": os.getenv("MYSQL_PASSWORD"),
-    "database": os.getenv("MYSQL_DATABASE")
+    "host":     os.getenv("MYSQLHOST",     os.getenv("MYSQL_HOST")),
+    "port":     int(os.getenv("MYSQLPORT", os.getenv("MYSQL_PORT", 3306))),
+    "user":     os.getenv("MYSQLUSER",     os.getenv("MYSQL_USER")),
+    "password": os.getenv("MYSQLPASSWORD", os.getenv("MYSQL_PASSWORD")),
+    "database": os.getenv("MYSQLDATABASE", os.getenv("MYSQL_DATABASE")),
 }
-
 
 
 def get_connection():
@@ -32,27 +29,15 @@ def get_connection():
 # ─────────────────────────────────────────
 def init_db():
     """
-    Create the database (if missing) and both tables.
+    Create tables if they don't exist.
+    Railway already provisions the database — we skip CREATE DATABASE.
     Returns (success: bool, message: str).
     """
-    cfg_no_db = {k: v for k, v in MYSQL_CONFIG.items() if k != "database"}
     try:
-        # Step 1 — create database
-        conn = mysql.connector.connect(**cfg_no_db)
+        conn = get_connection()
         cur  = conn.cursor()
-        cur.execute(
-            f"CREATE DATABASE IF NOT EXISTS `{MYSQL_CONFIG['database']}` "
-            f"CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-        )
-        conn.commit()
-        cur.close()
-        conn.close()
 
-        # Step 2 — create tables
-        conn2 = get_connection()
-        cur2  = conn2.cursor()
-
-        cur2.execute("""
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS transcripts (
                 id            INT AUTO_INCREMENT PRIMARY KEY,
                 meeting_title VARCHAR(255),
@@ -63,10 +48,10 @@ def init_db():
                 word_count    INT,
                 speakers      TEXT,
                 created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
 
-        cur2.execute("""
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS meeting_minutes (
                 id                INT AUTO_INCREMENT PRIMARY KEY,
                 transcript_id     INT NOT NULL,
@@ -83,12 +68,12 @@ def init_db():
                 FOREIGN KEY (transcript_id)
                     REFERENCES transcripts(id)
                     ON DELETE CASCADE
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         """)
 
-        conn2.commit()
-        cur2.close()
-        conn2.close()
+        conn.commit()
+        cur.close()
+        conn.close()
         return True, "Database & tables ready."
 
     except MySQLError as e:
